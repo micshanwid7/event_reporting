@@ -1,0 +1,561 @@
+[
+    {
+        "id": "6db946020450e319",
+        "type": "tab",
+        "label": "Unilever IoT",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3fabaaea450aaef9",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "058b9f97c723047b",
+        "type": "http request",
+        "z": "6db946020450e319",
+        "name": "api_get_dashboard",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/unilever_temp_hum/dashboard/api_get_dashboard",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "credentials": {},
+        "x": 390,
+        "y": 40,
+        "wires": [
+            [
+                "3fabaaea450aaef9",
+                "f0ec02bca5301bf7"
+            ]
+        ]
+    },
+    {
+        "id": "f0ec02bca5301bf7",
+        "type": "mqtt out",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_res_dashboard",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "417e20f645756baa",
+        "x": 630,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "507c9197b2789882",
+        "type": "mqtt in",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_req_dashboard",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "417e20f645756baa",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 40,
+        "wires": [
+            [
+                "058b9f97c723047b"
+            ]
+        ]
+    },
+    {
+        "id": "f3baba1607bdc80e",
+        "type": "mqtt in",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_req_livedata",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "417e20f645756baa",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "3e4f72482ea271cc"
+            ]
+        ]
+    },
+    {
+        "id": "3e4f72482ea271cc",
+        "type": "http request",
+        "z": "6db946020450e319",
+        "name": "api_get_livedata",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost:1880/temp_hum_api",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 380,
+        "y": 160,
+        "wires": [
+            [
+                "40ab9d8024c94f85",
+                "5e6a4505725e186d"
+            ]
+        ]
+    },
+    {
+        "id": "5e6a4505725e186d",
+        "type": "mqtt out",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_res_livedata",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "417e20f645756baa",
+        "x": 620,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "40ab9d8024c94f85",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3c152ffca9f90ff0",
+        "type": "mqtt in",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_req_display",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "417e20f645756baa",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "4e478ea13e2b168c"
+            ]
+        ]
+    },
+    {
+        "id": "4e478ea13e2b168c",
+        "type": "http request",
+        "z": "6db946020450e319",
+        "name": "api_get_display",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/unilever_temp_hum/display/api_display",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 380,
+        "y": 280,
+        "wires": [
+            [
+                "7a42ee87ac91be98",
+                "f4e6dc6f5cf06127"
+            ]
+        ]
+    },
+    {
+        "id": "f4e6dc6f5cf06127",
+        "type": "mqtt out",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_res_display",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "417e20f645756baa",
+        "x": 620,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "7a42ee87ac91be98",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "f7972186fa7c2123",
+        "type": "mqtt in",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_req_detail",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "417e20f645756baa",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 400,
+        "wires": [
+            [
+                "688803d2d6059683",
+                "6f35fdad1fb1730a"
+            ]
+        ]
+    },
+    {
+        "id": "6e953f3a165d73c3",
+        "type": "mqtt out",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_res_detail",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "417e20f645756baa",
+        "x": 750,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "9c4e06b0b87b5cf1",
+        "type": "http request",
+        "z": "6db946020450e319",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 530,
+        "y": 400,
+        "wires": [
+            [
+                "357d7486eabf6c59",
+                "6e953f3a165d73c3",
+                "146ada5c38bac80b"
+            ]
+        ]
+    },
+    {
+        "id": "357d7486eabf6c59",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "688803d2d6059683",
+        "type": "function",
+        "z": "6db946020450e319",
+        "name": "function 1",
+        "func": "var params = msg.payload\n\nvar api_url = 'http://localhost/unilever_temp_hum/detail/api_get_detail/'\nmsg.url = api_url  + params.id + '/' + params.tanggal\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 400,
+        "wires": [
+            [
+                "9c4e06b0b87b5cf1"
+            ]
+        ]
+    },
+    {
+        "id": "146ada5c38bac80b",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "url",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "550c02ad5442ca5f",
+        "type": "mqtt in",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_req_report",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "417e20f645756baa",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 580,
+        "wires": [
+            [
+                "d10c4ab56873c79d"
+            ]
+        ]
+    },
+    {
+        "id": "faa37037462e1bd1",
+        "type": "mqtt out",
+        "z": "6db946020450e319",
+        "name": "",
+        "topic": "unilever_res_report",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "417e20f645756baa",
+        "x": 750,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6c73fa563b09577b",
+        "type": "http request",
+        "z": "6db946020450e319",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 530,
+        "y": 580,
+        "wires": [
+            [
+                "faa37037462e1bd1",
+                "6f74099ec90e51db",
+                "8b30f72372a7bca5"
+            ]
+        ]
+    },
+    {
+        "id": "8b30f72372a7bca5",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 12",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "d10c4ab56873c79d",
+        "type": "function",
+        "z": "6db946020450e319",
+        "name": "function 2",
+        "func": "var params = msg.payload\n\nvar api_url = 'http://localhost/unilever_temp_hum/report/api_get_report/'\nmsg.url = api_url  + params.id + '/' + params.from_date + '/' + params.to_date\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 580,
+        "wires": [
+            [
+                "6c73fa563b09577b"
+            ]
+        ]
+    },
+    {
+        "id": "6f74099ec90e51db",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 13",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "url",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "06f7d9c167d560d3",
+        "type": "inject",
+        "z": "6db946020450e319",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"id\":\"d12\",\"from_date\":\"2023-06-15\",\"to_date\":\"2023-06-15\"}",
+        "payloadType": "json",
+        "x": 250,
+        "y": 700,
+        "wires": [
+            [
+                "d10c4ab56873c79d"
+            ]
+        ]
+    },
+    {
+        "id": "6f35fdad1fb1730a",
+        "type": "debug",
+        "z": "6db946020450e319",
+        "name": "debug 14",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "417e20f645756baa",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "147.139.185.19",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

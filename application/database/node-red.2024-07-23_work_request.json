@@ -1,0 +1,775 @@
+[
+    {
+        "id": "2d79eac1983396ec",
+        "type": "tab",
+        "label": "Manwinwin API - Work Request",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7ad4e6a074bfe5c9",
+        "type": "http request",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1070,
+        "y": 580,
+        "wires": [
+            [
+                "8d26749b243a2f69"
+            ]
+        ]
+    },
+    {
+        "id": "9a56022ddf58fafd",
+        "type": "inject",
+        "z": "2d79eac1983396ec",
+        "name": "Interval",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "15705f69b0fbd8d4"
+            ]
+        ]
+    },
+    {
+        "id": "4d1645ac7d14a08e",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Humidity Condition",
+        "func": "let listDevice = global.get(\"idList\")\nlet listWarn = global.get(\"all\")\nlet obj, obj2;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nlet alerts = [];\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_hum);\n\n    if (value['hum'] > warn) {\n        alerts.push({ deviceId: listDevice[x], index: x, code: arr_code[x] });\n    }\n}\n\nmsg.alerts = alerts;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 580,
+        "wires": [
+            [
+                "a3651e60179952c1"
+            ]
+        ]
+    },
+    {
+        "id": "8d26749b243a2f69",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 39",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "71df27bd08d095b3",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Again",
+        "func": "let listWarn = global.get(\"all\")\nif (!msg.alerts || msg.alerts.length === 0) return null;\n\nlet alerts = msg.alerts;\nlet confirmedAlerts = [];\n\nalerts.forEach(alert => {\n    let value = global.get(\"temp_hum\" + alert.deviceId);\n    let warn = parseInt(listWarn[alert.index].warn_hum);\n\n    if (value['hum'] > warn) {\n        confirmedAlerts.push({\n            deviceId: alert.deviceId,\n            value: value['hum'],\n            warn: warn,\n            code: alert.code\n        });\n    }\n});\n\nmsg.confirmedAlerts = confirmedAlerts;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 580,
+        "wires": [
+            [
+                "61d47e1bb2a817a1"
+            ]
+        ]
+    },
+    {
+        "id": "61d47e1bb2a817a1",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Send API",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nif (!msg.confirmedAlerts || msg.confirmedAlerts.length === 0) return null;\n\nmsg.confirmedAlerts.forEach(alert => {\n    let obj = {\n        \"Title\": \"Cek kondisi panel (Humidity tidak normal)\",\n        \"Date\": isoDate,\n        \"Urgency\": \"Urgent\",\n        \"Description\": \"Kondisi humidity panel di luar standard\",\n        \"CostAllocation\": {\n            \"Type\": \"2\",\n            \"Code\": alert.code\n        },\n        \"DestinationAllocation\": {\n            \"Type\": \"0\",\n            \"Code\": \"MGE.AM.ELT\"\n        },\n        \"System\": \"9.R.PC\",\n        \"Record\": 1.1,\n        \"DownState\": false,\n        \"Component\": \"\",\n        \"Cause\": \"\",\n        \"Symptom\": \"SP\",\n        \"Performer\": \"325531\",\n        \"UserCode1\": \"Abnormality\",\n        \"Quote\": false,\n        \"UserCode2\": \"Productivity\"\n    };\n\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = alert.code;\n    msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n    node.send(msg);\n});",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 580,
+        "wires": [
+            [
+                "7ad4e6a074bfe5c9"
+            ]
+        ]
+    },
+    {
+        "id": "1b0678b33060e6a5",
+        "type": "postgresql",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "d0a02d9539cb7d98",
+                "dfb1976c6ca0f228"
+            ]
+        ]
+    },
+    {
+        "id": "15705f69b0fbd8d4",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Select Delay",
+        "func": "msg.payload = 'select * from delay order by id'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 200,
+        "wires": [
+            [
+                "1b0678b33060e6a5"
+            ]
+        ]
+    },
+    {
+        "id": "d0a02d9539cb7d98",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Set Delay",
+        "func": "msg.delay = msg.payload[0].delay_hum * 60 * 1000;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 260,
+        "wires": [
+            [
+                "4d1645ac7d14a08e"
+            ]
+        ]
+    },
+    {
+        "id": "7e3c3dcca5b569cc",
+        "type": "http request",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1070,
+        "y": 380,
+        "wires": [
+            [
+                "5b7e2d5de81321b1"
+            ]
+        ]
+    },
+    {
+        "id": "b5ad9140f290c0b0",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Temperature Condition",
+        "func": "let listDevice = global.get(\"idList\")\nlet listWarn = global.get(\"all\")\nlet obj, obj2;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nlet alerts = [];\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_temp);\n\n    if (value['temp'] > warn) {\n        alerts.push({ deviceId: listDevice[x], index: x, code: arr_code[x] });\n    }\n}\n\nmsg.alerts = alerts;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 380,
+        "wires": [
+            [
+                "122f3559e3cdd6e1"
+            ]
+        ]
+    },
+    {
+        "id": "5b7e2d5de81321b1",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 40",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "7ee0649430250354",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Again",
+        "func": "let listWarn = global.get(\"all\")\nif (!msg.alerts || msg.alerts.length === 0) return null;\n\nlet alerts = msg.alerts;\nlet confirmedAlerts = [];\n\nalerts.forEach(alert => {\n    let value = global.get(\"temp_hum\" + alert.deviceId);\n    let warn = parseInt(listWarn[alert.index].warn_temp);\n\n    if (value['temp'] > warn) {\n        confirmedAlerts.push({\n            deviceId: alert.deviceId,\n            value: value['temp'],\n            warn: warn,\n            code: alert.code\n        });\n    }\n});\n\nmsg.confirmedAlerts = confirmedAlerts;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 380,
+        "wires": [
+            [
+                "ba262505d860a00a"
+            ]
+        ]
+    },
+    {
+        "id": "ba262505d860a00a",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Send API",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nif (!msg.confirmedAlerts || msg.confirmedAlerts.length === 0) return null;\n\nmsg.confirmedAlerts.forEach(alert => {\n    let obj = {\n        \"Title\": \"Mohon cek kondisi panel (Termperature tidak normal)\",\n        \"Date\": isoDate,\n        \"Urgency\": \"Urgent\",\n        \"Description\": \"Kondisi temperature panel di luar standard\",\n        \"CostAllocation\": {\n            \"Type\": \"2\",\n            \"Code\": alert.code\n        },\n        \"DestinationAllocation\": {\n            \"Type\": \"0\",\n            \"Code\": \"MGE.AM.ELT\"\n        },\n        \"System\": \"9.R.PC\",\n        \"Record\": 1.1,\n        \"DownState\": false,\n        \"Component\": \"\",\n        \"Cause\": \"\",\n        \"Symptom\": \"SP\",\n        \"Performer\": \"325531\",\n        \"UserCode1\": \"Abnormality\",\n        \"Quote\": false,\n        \"UserCode2\": \"Productivity\"\n    };\n\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = alert.code;\n    msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n    node.send(msg);\n});",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 380,
+        "wires": [
+            [
+                "7e3c3dcca5b569cc"
+            ]
+        ]
+    },
+    {
+        "id": "9ee72baf2b811ee7",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "function 15",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nlet listDevice = global.get(\"idList\")\nlet listWarn = global.get(\"all\")\nlet obj, obj2;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_hum);\n    if(value['hum'] > warn) {\n        msg.dev_id = arr_code[x]\n        msg.value = value['hum']\n        msg.warn = warn\n        return msg;\n    }\n}\n\n// for (let x in listDevice) {\n//     obj = {}\n//     let value = global.get(\"temp_hum\" + listDevice[x]);\n//     let warn = listWarn[x].warn_humidity;\n//     if (value['hum'] > warn) {\n//        obj = {\n//             \"Title\": \"Temperature tidak normal\",\n//             \"Date\": isoDate,\n//             \"Urgency\": \"Emergency\",\n//             \"Description\": \"Temperature melebihi target normal\",\n//             \"CostAllocation\": {\n//                 \"Type\": \"2\",\n//                 \"Code\": arr_code[x]\n//             },\n//             \"DestinationAllocation\": {\n//                 \"Type\": \"0\",\n//                 \"Code\": \"MGE.AM.SHF\"\n//             },\n//             \"System\": \"9.R.PC.PL.TRB3\",\n//             \"Record\": 1.1,\n//             \"DownState\": false,\n//             \"Component\": \"\",\n//             \"Cause\": \"\",\n//             \"Symptom\": \"CH\",\n//             \"Performer\": \"370362\",\n//             \"UserCode1\": \"Abnormality\",\n//             \"Quote\": false,\n//             \"UserCode2\": \"Productivity\"\n//         };\n//         msg.headers = {\n//             \"Authorization\": \"Bearer \" + ac_token\n//         };\n//         msg.value = value['hum']\n//         msg.warn = warn\n//         msg.payload = obj;\n//         msg.topic = arr_code[x];\n//         msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n//         node.send(msg);\n//     }\n// }",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dfb1976c6ca0f228",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Set Delay",
+        "func": "msg.delay = msg.payload[0].delay_temp * 60 * 1000;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 140,
+        "wires": [
+            [
+                "b5ad9140f290c0b0"
+            ]
+        ]
+    },
+    {
+        "id": "a3651e60179952c1",
+        "type": "delay",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "pauseType": "delayv",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 540,
+        "y": 580,
+        "wires": [
+            [
+                "71df27bd08d095b3"
+            ]
+        ]
+    },
+    {
+        "id": "122f3559e3cdd6e1",
+        "type": "delay",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "pauseType": "delayv",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 540,
+        "y": 380,
+        "wires": [
+            [
+                "7ee0649430250354"
+            ]
+        ]
+    },
+    {
+        "id": "0d1bffe125ac8064",
+        "type": "inject",
+        "z": "2d79eac1983396ec",
+        "name": "Interval",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 780,
+        "wires": [
+            [
+                "634ceb1876d46da6",
+                "6d11dd7331ac56a2"
+            ]
+        ]
+    },
+    {
+        "id": "24304a0160b8ee57",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Humidity",
+        "func": "let listDevice = global.get(\"idList\")\nlet arr_timer = global.get('timer');\nlet listWarn = global.get(\"all\")\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nlet arr = global.get('timer') || [];\nlet confirmedAlerts = [];\n\n// Ensure arr is properly initialized if arr_timer is undefined\nif (arr.length === 0) {\n    for (let index = 0; index < listWarn.length; index++) {\n        arr.push(0);\n    }\n    global.set('timer', arr);\n}\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_hum);\n\n    if (value && value['hum'] > warn) {\n        arr[x] = arr[x] + 1;\n    }else{\n        arr[x] = 0;\n    }\n\n    if(arr[x] > msg.delay){\n        confirmedAlerts.push({\n            deviceId: listDevice[x],\n            value: value['hum'],\n            warn: warn,\n            code: arr_code[x]\n        });\n        arr[x] = 0;\n    }\n}\n\n// Update the global timer array\nglobal.set('timer', arr);\n\nmsg.payload = arr\nmsg.confirmedAlerts = confirmedAlerts\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 780,
+        "wires": [
+            [
+                "eda7b072c1820fe3",
+                "701e66f757677e3b",
+                "1fef1e83b31c180e"
+            ]
+        ]
+    },
+    {
+        "id": "eda7b072c1820fe3",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 43",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "confirmedAlerts",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "fc2d3164484f0cbf",
+        "type": "postgresql",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 470,
+        "y": 780,
+        "wires": [
+            [
+                "5116ab383f164769"
+            ]
+        ]
+    },
+    {
+        "id": "634ceb1876d46da6",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Select Delay",
+        "func": "msg.payload = 'select * from delay order by id'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 780,
+        "wires": [
+            [
+                "fc2d3164484f0cbf"
+            ]
+        ]
+    },
+    {
+        "id": "5116ab383f164769",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Set Delay",
+        "func": "msg.delay = msg.payload[0].delay_hum * 60 * 1000;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 780,
+        "wires": [
+            [
+                "24304a0160b8ee57"
+            ]
+        ]
+    },
+    {
+        "id": "3c69417d4892dc51",
+        "type": "http request",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1130,
+        "y": 780,
+        "wires": [
+            [
+                "05890f6c5cdd69ca"
+            ]
+        ]
+    },
+    {
+        "id": "05890f6c5cdd69ca",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 44",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "701e66f757677e3b",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Send API",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nif (!msg.confirmedAlerts || msg.confirmedAlerts.length === 0) return null;\n\nmsg.confirmedAlerts.forEach(alert => {\n    let obj = {\n        \"Title\": \"Cek kondisi panel (Humidity tidak normal)\",\n        \"Date\": isoDate,\n        \"Urgency\": \"Urgent\",\n        \"Description\": \"Kondisi humidity panel di luar standard\",\n        \"CostAllocation\": {\n            \"Type\": \"2\",\n            \"Code\": alert.code\n        },\n        \"DestinationAllocation\": {\n            \"Type\": \"0\",\n            \"Code\": \"MGE.AM.ELT\"\n        },\n        \"System\": \"9.R.PC\",\n        \"Record\": 1.1,\n        \"DownState\": false,\n        \"Component\": \"\",\n        \"Cause\": \"\",\n        \"Symptom\": \"SP\",\n        \"Performer\": \"325531\",\n        \"UserCode1\": \"Abnormality\",\n        \"Quote\": false,\n        \"UserCode2\": \"Productivity\"\n    };\n\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = alert.code;\n    msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n    node.send(msg);\n});",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 780,
+        "wires": [
+            [
+                "3c69417d4892dc51"
+            ]
+        ]
+    },
+    {
+        "id": "75bc4eb3872aa859",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Check Temperature",
+        "func": "let listDevice = global.get(\"idList\")\nlet arr_timer = global.get('timer2');\nlet listWarn = global.get(\"all\")\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nlet arr = global.get('timer2') || [];\nlet confirmedAlerts = [];\n\n// Ensure arr is properly initialized if arr_timer is undefined\nif (arr.length === 0) {\n    for (let index = 0; index < listWarn.length; index++) {\n        arr.push(0);\n    }\n    global.set('timer2', arr);\n}\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_temp);\n\n    if (value && value['temp'] > warn) {\n        arr[x] = arr[x] + 1;\n    }else{\n        arr[x] = 0;\n    }\n\n    if(arr[x] > msg.delay){\n        confirmedAlerts.push({\n            deviceId: listDevice[x],\n            value: value['temp'],\n            warn: warn,\n            code: arr_code[x]\n        });\n        arr[x] = 0;\n    }\n}\n\n// Update the global timer array\nglobal.set('timer2', arr);\n\nmsg.payload = arr\nmsg.confirmedAlerts = confirmedAlerts\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 980,
+        "wires": [
+            [
+                "aeb0ce8e48aa7582",
+                "6a77df1e8c08b1cd",
+                "d9a939e648ade394"
+            ]
+        ]
+    },
+    {
+        "id": "aeb0ce8e48aa7582",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 45",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "64500315e17fafd4",
+        "type": "postgresql",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 470,
+        "y": 980,
+        "wires": [
+            [
+                "8fb7c1817afc45a9"
+            ]
+        ]
+    },
+    {
+        "id": "6d11dd7331ac56a2",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Select Delay",
+        "func": "msg.payload = 'select * from delay order by id'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 980,
+        "wires": [
+            [
+                "64500315e17fafd4"
+            ]
+        ]
+    },
+    {
+        "id": "8fb7c1817afc45a9",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Set Delay",
+        "func": "msg.delay = msg.payload[0].delay_temp * 60 * 1000;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 980,
+        "wires": [
+            [
+                "75bc4eb3872aa859"
+            ]
+        ]
+    },
+    {
+        "id": "b197a3e245761327",
+        "type": "http request",
+        "z": "2d79eac1983396ec",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1150,
+        "y": 980,
+        "wires": [
+            [
+                "88a0e9e206d65527"
+            ]
+        ]
+    },
+    {
+        "id": "88a0e9e206d65527",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 46",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "6a77df1e8c08b1cd",
+        "type": "function",
+        "z": "2d79eac1983396ec",
+        "name": "Send API",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nif (!msg.confirmedAlerts || msg.confirmedAlerts.length === 0) return null;\n\nmsg.confirmedAlerts.forEach(alert => {\n    let obj = {\n        \"Title\": \"Cek kondisi panel (Temperature tidak normal)\",\n        \"Date\": isoDate,\n        \"Urgency\": \"Urgent\",\n        \"Description\": \"Kondisi temperature panel di luar standard\",\n        \"CostAllocation\": {\n            \"Type\": \"2\",\n            \"Code\": alert.code\n        },\n        \"DestinationAllocation\": {\n            \"Type\": \"0\",\n            \"Code\": \"MGE.AM.ELT\"\n        },\n        \"System\": \"9.R.PC\",\n        \"Record\": 1.1,\n        \"DownState\": false,\n        \"Component\": \"\",\n        \"Cause\": \"\",\n        \"Symptom\": \"SP\",\n        \"Performer\": \"325531\",\n        \"UserCode1\": \"Abnormality\",\n        \"Quote\": false,\n        \"UserCode2\": \"Productivity\"\n    };\n\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = alert.code;\n    msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n    node.send(msg);\n});",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 980,
+        "wires": [
+            [
+                "b197a3e245761327"
+            ]
+        ]
+    },
+    {
+        "id": "1fef1e83b31c180e",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 47",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "d9a939e648ade394",
+        "type": "debug",
+        "z": "2d79eac1983396ec",
+        "name": "debug 48",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "confirmedAlerts",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "75221c0a883ee815",
+        "type": "postgreSQLConfig",
+        "name": "db_unilever",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "unilever_temp_hum",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "@indoserako",
+        "passwordFieldType": "str"
+    }
+]

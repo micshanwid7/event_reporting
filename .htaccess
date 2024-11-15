@@ -1,0 +1,6 @@
+RewriteEngine on
+RewriteBase /event_reporting
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond $1 !^(index\.php|asset|css|development-bundle|images|js|style|system|user_guide\.txt)
+RewriteRule ^(.*)$ index.php/$1 [L]

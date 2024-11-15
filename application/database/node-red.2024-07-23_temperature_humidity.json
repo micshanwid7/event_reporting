@@ -1,0 +1,1118 @@
+[
+    {
+        "id": "7c651a7b.51e084",
+        "type": "tab",
+        "label": "temperature_humidity",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5542cd57b57db360",
+        "type": "postgresql",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 430,
+        "y": 140,
+        "wires": [
+            [
+                "85b9445d55c96262",
+                "3357b79a2b62495a",
+                "6ae0c204a47bee68"
+            ]
+        ]
+    },
+    {
+        "id": "5d2f7d4df943ccf4",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1340,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "4a043edcfc1da204",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "select device",
+        "func": "msg.payload = 'select * from device order by id'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 140,
+        "wires": [
+            [
+                "5542cd57b57db360"
+            ]
+        ]
+    },
+    {
+        "id": "c0c6694aedc3f62e",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "4a043edcfc1da204"
+            ]
+        ]
+    },
+    {
+        "id": "dcd674126c59f795",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 770,
+        "y": 140,
+        "wires": [
+            [
+                "4269435fe11eba37"
+            ]
+        ]
+    },
+    {
+        "id": "85b9445d55c96262",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "url builder",
+        "func": "for(let x in msg.payload){\n    let url = msg.payload[x].ip_address\n    let port = msg.payload[x].port\n    msg.url = `http://${url}/iolinkmaster/port[${port}]/iolinkdevice/pdin/getdata`\n    msg.topic = msg.payload[x].id\n    node.send(msg)\n}\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 140,
+        "wires": [
+            [
+                "dcd674126c59f795"
+            ]
+        ]
+    },
+    {
+        "id": "889471d8e25523d7",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "code dump example",
+        "func": "//msg.payload = { \"cid\": -1, \"data\": { \"value\": \"016DFF000166FF00\" }, \"code\": 200 }\n//msg.payload = {\"cid\":-1,\"data\":{\"value\":\"01B2FF000133FF00\"},\"code\":200}\n//msg.payload = { \"cid\": -1, \"data\": { \"value\": \"01A2FF00010EFF00\" }, \"code\": 200 }\nmsg.payload = { \"cid\": -1, \"data\": { \"value\": \"018FFF00014AFF00\" }, \"code\": 200 }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 620,
+        "wires": [
+            [
+                "e661a41fdeb3af6d"
+            ]
+        ]
+    },
+    {
+        "id": "280fb7e7d43a863b",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "5f6e8213ef56d397",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 620,
+        "wires": [
+            [
+                "889471d8e25523d7"
+            ]
+        ]
+    },
+    {
+        "id": "e661a41fdeb3af6d",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "33084c45c3e91f28",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "function 1",
+        "func": "let raw = parseInt(\"0x\"+msg.payload.data.value, 16)\nlet currentdate = new Date()\nlet temp = parseInt(\"0x\" + msg.payload.data.value.substring(8, 12), 16)/10\nlet hum = parseInt(\"0x\" + msg.payload.data.value.substring(0, 4), 16) /10\nlet value = { \"temp\": temp, \"hum\": hum }\nglobal.set(\"temp_hum\" + msg.topic, value)\nglobal.set(\"update\", msg.time)\nmsg.payload = value\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 140,
+        "wires": [
+            [
+                "5d2f7d4df943ccf4"
+            ]
+        ]
+    },
+    {
+        "id": "3357b79a2b62495a",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "id setter",
+        "func": "let id = []\nlet all = []\nfor (let x in msg.payload) {\n    id.push(msg.payload[x].id)\n    all[x] = { id: msg.payload[x].id,\n        line: msg.payload[x].line,\n        warn_temp: msg.payload[x].warn_temperature,\n        warn_hum: msg.payload[x].warn_humidity}\n}\n\nglobal.set(\"idList\", id)\nglobal.set(\"all\", all)\nmsg.payload = id\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 220,
+        "wires": [
+            [
+                "280fb7e7d43a863b"
+            ]
+        ]
+    },
+    {
+        "id": "b96b30151b24918a",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "data parser",
+        "func": "let listDevice = global.get(\"idList\")\nlet result = {}\nresult.device = {}\n\nfor (let x in listDevice) {\n    result.device[listDevice[x]] = global.get(\"temp_hum\" + listDevice[x])\n    result[\"last_update\"] = global.get(\"update\")\n}\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "e48150acde85346b",
+                "1e905520ec1a595c"
+            ]
+        ]
+    },
+    {
+        "id": "6ae0c204a47bee68",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "dc96202d541315c4",
+        "type": "http in",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "url": "/temp_hum_api",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 280,
+        "wires": [
+            [
+                "b96b30151b24918a"
+            ]
+        ]
+    },
+    {
+        "id": "e48150acde85346b",
+        "type": "http response",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 480,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "71f46fce07faaae2",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "3cc9b2d8e0230e4e"
+            ]
+        ]
+    },
+    {
+        "id": "3cc9b2d8e0230e4e",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "data logger",
+        "func": "let all = global.get(\"all\")\nmsg.payload = all;\nlet query =  `INSERT INTO data_log(device_id, line, temp, humidity, created_at) values`\nlet result = {}\nlet num =0\n\nlet update = global.get(\"update\")\nlet udpateOld = global.get(\"updateOld\")\nif(update != udpateOld){\n    for (let x in all) {\n        let allParam = global.get(\"temp_hum\" + all[x].id)\n        let temp = allParam.temp\n        let hum = allParam.hum\n        if (num == 0) {\n            query = query + `(${all[x].id}, '${all[x].line}', ${temp}, ${hum}, '${update}+07')`\n        } else {\n            query = query + `,(${all[x].id}, '${all[x].line}', ${temp}, ${hum}, '${update}+07')`\n        }\n        num = 1\n    }\n    msg.payload = query\n    global.set(\"updateOld\", update)\n    return msg;\n}else{\n}\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 440,
+        "wires": [
+            [
+                "f12189370af5a50f",
+                "62965ade96dd5484"
+            ]
+        ]
+    },
+    {
+        "id": "d12a596358b48444",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "62965ade96dd5484",
+        "type": "postgresql",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 450,
+        "y": 440,
+        "wires": [
+            [
+                "d12a596358b48444"
+            ]
+        ]
+    },
+    {
+        "id": "f12189370af5a50f",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 8",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "4269435fe11eba37",
+        "type": "moment",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "topic": "",
+        "input": "",
+        "inputType": "date",
+        "inTz": "Asia/Jakarta",
+        "adjAmount": 0,
+        "adjType": "days",
+        "adjDir": "add",
+        "format": "YYYY-MM-DD HH:mm:ss",
+        "locale": "en-US",
+        "output": "time",
+        "outputType": "msg",
+        "outTz": "Asia/Jakarta",
+        "x": 960,
+        "y": 140,
+        "wires": [
+            [
+                "33084c45c3e91f28"
+            ]
+        ]
+    },
+    {
+        "id": "88817217f89c4496",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 740,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c0c9af9e97b28ccb",
+        "type": "exec",
+        "z": "7c651a7b.51e084",
+        "command": "ping google.com -c 5",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 300,
+        "y": 520,
+        "wires": [
+            [
+                "edf0b64f28fe1183"
+            ],
+            [
+                "edf0b64f28fe1183"
+            ],
+            [
+                "edf0b64f28fe1183"
+            ]
+        ]
+    },
+    {
+        "id": "edf0b64f28fe1183",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 10",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "71adfc2d7ae5efb4",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "c0c9af9e97b28ccb"
+            ]
+        ]
+    },
+    {
+        "id": "1e905520ec1a595c",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 15",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4c5c0c2fcd3ee1be",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://unilever.manwinwin.com/MwwAPI/api/Token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": ""
+            }
+        ],
+        "x": 290,
+        "y": 760,
+        "wires": [
+            [
+                "2e807f4e055e13f4",
+                "6fdbf0b580ad9a6b"
+            ]
+        ]
+    },
+    {
+        "id": "e76dd07483fa600e",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "Get Token",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "headers",
+                "v": "{\"content-type\":\"application/x-www-form-urlencoded\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"grant_type\":\"password\",\"username\":\"PDMSYS\",\"password\":\"PDMSYS\"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 760,
+        "wires": [
+            [
+                "4c5c0c2fcd3ee1be"
+            ]
+        ]
+    },
+    {
+        "id": "d70ffae87e7921d9",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 650,
+        "y": 840,
+        "wires": [
+            [
+                "4226ba3c7a879580",
+                "e324c7344eb19415"
+            ]
+        ]
+    },
+    {
+        "id": "2e807f4e055e13f4",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "Insert Temperature Value",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = msg.payload.access_token;\n\nlet listDevice = global.get(\"idList\")\nlet listWarn = global.get(\"all\")\nlet obj, obj2;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nfor (let x in listDevice) {\n    obj = {}\n    obj2 = {}\n    let value = global.get(\"temp_hum\" + listDevice[x])\n    let warn = listWarn[x].warn_temperature;\n    // if(value > warn){\n    //     msg.headers = {\n    //         \"Authorization\": \"Bearer \" + ac_token\n    //     };\n    //     msg.payload = obj;\n    //     msg.topic = arr_code[x]\n    //     msg.url = \"https://unilever.manwinwin.com/api/Items/\" + arr_code[x] + \"/Readings/01\"\n    // }\n    obj = {\n        \"Date\": isoDate,\n        \"Value\": value['temp'],\n        \"Notes\": \"Temperature Value\",\n        \"Employee\": \"PDMSYS\",\n    };\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = arr_code[x]\n    msg.url = \"https://unilever.manwinwin.com/api/Items/\" + arr_code[x] + \"/Readings/01\"\n    node.send(msg);\n}\n\n// return msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 760,
+        "wires": [
+            [
+                "aca62dd521532213",
+                "d70ffae87e7921d9"
+            ]
+        ]
+    },
+    {
+        "id": "4226ba3c7a879580",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "statusCode",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "aca62dd521532213",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "6fdbf0b580ad9a6b",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 20",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload.access_token",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "e324c7344eb19415",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 21",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "8feeb72775f412bd",
+        "type": "delay",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 460,
+        "y": 880,
+        "wires": [
+            [
+                "73cf627c88691aa7"
+            ]
+        ]
+    },
+    {
+        "id": "73cf627c88691aa7",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 22",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "31b749b6782c6513",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://unilever.manwinwin.com/MwwAPI/api/Token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": ""
+            }
+        ],
+        "x": 290,
+        "y": 1020,
+        "wires": [
+            [
+                "f6e9cdb45e85e5ff",
+                "8dcc555a3f30b595",
+                "4782c53763e1e627"
+            ]
+        ]
+    },
+    {
+        "id": "e28551f6a52bdbdb",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "Get Token",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "headers",
+                "v": "{\"content-type\":\"application/x-www-form-urlencoded\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "7200",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"grant_type\":\"password\",\"username\":\"PDMSYS\",\"password\":\"PDMSYS\"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 1020,
+        "wires": [
+            [
+                "31b749b6782c6513"
+            ]
+        ]
+    },
+    {
+        "id": "f7e4b9e738f36acd",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 650,
+        "y": 1100,
+        "wires": [
+            [
+                "13d66a1bcac0d5eb",
+                "19c8043de395df6c"
+            ]
+        ]
+    },
+    {
+        "id": "13d66a1bcac0d5eb",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 23",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "statusCode",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "f6e9cdb45e85e5ff",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 25",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload.access_token",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "19c8043de395df6c",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 26",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "77dd423d4b712b57",
+        "type": "delay",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 460,
+        "y": 1140,
+        "wires": [
+            [
+                "465df6669cb1893a"
+            ]
+        ]
+    },
+    {
+        "id": "465df6669cb1893a",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 27",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "8dcc555a3f30b595",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "Insert Vibration Value",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = msg.payload.access_token;\n\nlet listDevice = global.get(\"idList\")\nlet obj;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nfor (let x in listDevice) {\n    obj = {}\n    let value = global.get(\"temp_hum\" + listDevice[x])\n    obj = {\n        \"Date\": isoDate,\n        \"Value\": value['hum'],\n        \"Notes\": \"Humidity Value\",\n        \"Employee\": \"PDMSYS\",\n    };\n    msg.headers = {\n        \"Authorization\": \"Bearer \" + ac_token\n    };\n    msg.payload = obj;\n    msg.topic = arr_code[x]\n    msg.url = \"https://unilever.manwinwin.com/api/Items/\" + arr_code[x] + \"/Readings/06\"\n    node.send(msg);\n}\n\n// return msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1020,
+        "wires": [
+            [
+                "f7e4b9e738f36acd"
+            ]
+        ]
+    },
+    {
+        "id": "14898294bd8e1039",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 940,
+        "y": 380,
+        "wires": [
+            [
+                "6d7b37deba43a3cc"
+            ]
+        ]
+    },
+    {
+        "id": "6d7b37deba43a3cc",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "function 13",
+        "func": "let update = global.get(\"update\")\nlet udpateOld = global.get(\"updateOld\")\nmsg.update = update\nmsg.old = udpateOld\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 380,
+        "wires": [
+            [
+                "9ddb535b6813f047"
+            ]
+        ]
+    },
+    {
+        "id": "9ddb535b6813f047",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 34",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "4782c53763e1e627",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "Set Access Token",
+        "func": "global.set(\"access_token\", msg.payload.access_token);\n\nlet a = global.get(\"access_token\");\nmsg.payload = a\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 1140,
+        "wires": [
+            [
+                "0d999add4cab04b3"
+            ]
+        ]
+    },
+    {
+        "id": "0d999add4cab04b3",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 36",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "5bb14795b29d6c63",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "function 14",
+        "func": "let time = global.get(\"update\")\nvar date = new Date(time);\nvar isoDate = date.toISOString();\nlet ac_token = global.get(\"access_token\");\n\nlet listDevice = global.get(\"idList\")\nlet listWarn = global.get(\"all\")\nlet obj, obj2;\nlet arr_code = [\n    'D11-02.FLN.00',\n    'D11-03.CTN.01',\n    'D11-01.TBF.09.01',\n    'D11-01.TBF.10.01',\n    'D12-01.TBF.03.01',\n    'D12-02.FLN.01',\n    'D12-05.CSP.01',\n    'D12-03.CTN.01',\n    'D14-01.TBF.03.01',\n    'D14-02.FLN.01',\n    'D14-03.CTN.01',\n    'D14-04.OWP.01',\n    'D15-01.TBF.03.01',\n    'D15-02.FLN.01',\n    'D15-05.CSP.01',\n    'D15-03.CTN.01',\n    'D4-01.FLN.01',\n    'D4-04.CSP.01',\n    'D6-02.CTN.01',\n    'D6-04.CSP.01',\n    'D7-02.FLN.01',\n    'D7-05.CSP.01',\n    'D8-04.OWP.01',\n    'D8-05.CSP.01',\n    'D9-04.CSP.01',\n    'D9-01.FLN.01',\n    'D10-02.FLN.00',\n    'D10-05. CSP.01',\n    'D16-05.CTN.01',\n    'D16-07.CSP.01',\n    'D18-02.FLN.01',\n    'D18-04.OVW.01',\n    'UHS-05.CSP.01',\n    'UHS-03.CTN.01',\n    'UHS-04.OVW.01',\n    'UHS-02.FLN.01'\n];\n\nfor (let x in listDevice) {\n    let value = global.get(\"temp_hum\" + listDevice[x]);\n    let warn = parseInt(listWarn[x].warn_hum);\n    if(value['hum'] > warn) {\n        msg.dev_id = arr_code[x]\n        msg.value = value['hum']\n        msg.warn = warn\n        return msg;\n    }\n}\n\n// for (let x in listDevice) {\n//     obj = {}\n//     let value = global.get(\"temp_hum\" + listDevice[x]);\n//     let warn = listWarn[x].warn_humidity;\n//     if (value['hum'] > warn) {\n//        obj = {\n//             \"Title\": \"Temperature tidak normal\",\n//             \"Date\": isoDate,\n//             \"Urgency\": \"Emergency\",\n//             \"Description\": \"Temperature melebihi target normal\",\n//             \"CostAllocation\": {\n//                 \"Type\": \"2\",\n//                 \"Code\": arr_code[x]\n//             },\n//             \"DestinationAllocation\": {\n//                 \"Type\": \"0\",\n//                 \"Code\": \"MGE.AM.SHF\"\n//             },\n//             \"System\": \"9.R.PC.PL.TRB3\",\n//             \"Record\": 1.1,\n//             \"DownState\": false,\n//             \"Component\": \"\",\n//             \"Cause\": \"\",\n//             \"Symptom\": \"CH\",\n//             \"Performer\": \"370362\",\n//             \"UserCode1\": \"Abnormality\",\n//             \"Quote\": false,\n//             \"UserCode2\": \"Productivity\"\n//         };\n//         msg.headers = {\n//             \"Authorization\": \"Bearer \" + ac_token\n//         };\n//         msg.value = value['hum']\n//         msg.warn = warn\n//         msg.payload = obj;\n//         msg.topic = arr_code[x];\n//         msg.url = \"https://unilever.manwinwin.com/api/Requests\";\n//         node.send(msg);\n//     }\n// }",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "75221c0a883ee815",
+        "type": "postgreSQLConfig",
+        "name": "db_unilever",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "unilever_temp_hum",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "@indoserako",
+        "passwordFieldType": "str"
+    }
+]

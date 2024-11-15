@@ -1,0 +1,581 @@
+[
+    {
+        "id": "7c651a7b.51e084",
+        "type": "tab",
+        "label": "temperature_humidity",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5542cd57b57db360",
+        "type": "postgresql",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 430,
+        "y": 140,
+        "wires": [
+            [
+                "85b9445d55c96262",
+                "3357b79a2b62495a",
+                "6ae0c204a47bee68"
+            ]
+        ]
+    },
+    {
+        "id": "5d2f7d4df943ccf4",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1340,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "4a043edcfc1da204",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "select device",
+        "func": "msg.payload = 'select * from device;'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 140,
+        "wires": [
+            [
+                "5542cd57b57db360"
+            ]
+        ]
+    },
+    {
+        "id": "c0c6694aedc3f62e",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "4a043edcfc1da204"
+            ]
+        ]
+    },
+    {
+        "id": "dcd674126c59f795",
+        "type": "http request",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 730,
+        "y": 140,
+        "wires": [
+            [
+                "4269435fe11eba37"
+            ]
+        ]
+    },
+    {
+        "id": "85b9445d55c96262",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "url builder",
+        "func": "for(let x in msg.payload){\n    let url = msg.payload[x].ip_address\n    let port = msg.payload[x].port\n    msg.url = `http://${url}/iolinkmaster/port[${port}]/iolinkdevice/pdin/getdata`\n    msg.topic = msg.payload[x].id\n    node.send(msg)\n}\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 140,
+        "wires": [
+            [
+                "dcd674126c59f795"
+            ]
+        ]
+    },
+    {
+        "id": "889471d8e25523d7",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "code dump example",
+        "func": "//msg.payload = { \"cid\": -1, \"data\": { \"value\": \"016DFF000166FF00\" }, \"code\": 200 }\n//msg.payload = {\"cid\":-1,\"data\":{\"value\":\"01B2FF000133FF00\"},\"code\":200}\n//msg.payload = { \"cid\": -1, \"data\": { \"value\": \"01A2FF00010EFF00\" }, \"code\": 200 }\nmsg.payload = { \"cid\": -1, \"data\": { \"value\": \"018FFF00014AFF00\" }, \"code\": 200 }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 620,
+        "wires": [
+            [
+                "e661a41fdeb3af6d"
+            ]
+        ]
+    },
+    {
+        "id": "280fb7e7d43a863b",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "5f6e8213ef56d397",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 620,
+        "wires": [
+            [
+                "889471d8e25523d7"
+            ]
+        ]
+    },
+    {
+        "id": "e661a41fdeb3af6d",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "33084c45c3e91f28",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "function 1",
+        "func": "let raw = parseInt(\"0x\"+msg.payload.data.value, 16)\nlet currentdate = new Date()\nlet temp = parseInt(\"0x\" + msg.payload.data.value.substring(8, 12), 16)/10\nlet hum = parseInt(\"0x\" + msg.payload.data.value.substring(0, 4), 16) /10\nlet value = { \"temp\": temp, \"hum\": hum }\nglobal.set(\"temp_hum\" + msg.topic, value)\nglobal.set(\"update\", msg.time)\nmsg.payload = value\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 140,
+        "wires": [
+            [
+                "5d2f7d4df943ccf4"
+            ]
+        ]
+    },
+    {
+        "id": "3357b79a2b62495a",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "id setter",
+        "func": "let id = []\nlet all = []\nfor (let x in msg.payload) {\n    id.push(msg.payload[x].id)\n    all[x] = { id: msg.payload[x].id,\n        line: msg.payload[x].line}\n}\n\nglobal.set(\"idList\", id)\nglobal.set(\"all\", all)\nmsg.payload = id\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 220,
+        "wires": [
+            [
+                "280fb7e7d43a863b"
+            ]
+        ]
+    },
+    {
+        "id": "b96b30151b24918a",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "data parser",
+        "func": "let listDevice = global.get(\"idList\")\nlet result = {}\nresult.device = {}\n\nfor (let x in listDevice) {\n    result.device[listDevice[x]] = global.get(\"temp_hum\" + listDevice[x])\n    result[\"last_update\"] = global.get(\"update\")\n}\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "e48150acde85346b"
+            ]
+        ]
+    },
+    {
+        "id": "6ae0c204a47bee68",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "dc96202d541315c4",
+        "type": "http in",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "url": "/temp_hum_api",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 280,
+        "wires": [
+            [
+                "b96b30151b24918a"
+            ]
+        ]
+    },
+    {
+        "id": "e48150acde85346b",
+        "type": "http response",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 480,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "71f46fce07faaae2",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "3cc9b2d8e0230e4e"
+            ]
+        ]
+    },
+    {
+        "id": "3cc9b2d8e0230e4e",
+        "type": "function",
+        "z": "7c651a7b.51e084",
+        "name": "data logger",
+        "func": "let all = global.get(\"all\")\nmsg.payload = all;\nlet query =  `INSERT INTO data_log(device_id, line, temp, humidity, created_at) values`\nlet result = {}\nlet num =0\n\nlet update = global.get(\"update\")\nlet udpateOld = global.get(\"updateOld\")\nif(update != udpateOld){\n    for (let x in all) {\n        let allParam = global.get(\"temp_hum\" + all[x].id)\n        let temp = allParam.temp\n        let hum = allParam.hum\n        if (num == 0) {\n            query = query + `(${all[x].id}, '${all[x].line}', ${temp}, ${hum}, '${update}+07')`\n        } else {\n            query = query + `,(${all[x].id}, '${all[x].line}', ${temp}, ${hum}, '${update}+07')`\n        }\n        num = 1\n    }\n    msg.payload = query\n    global.set(\"updateOld\", update)\n    return msg;\n}else{\n\n}\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 440,
+        "wires": [
+            [
+                "f12189370af5a50f",
+                "62965ade96dd5484"
+            ]
+        ]
+    },
+    {
+        "id": "d12a596358b48444",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "62965ade96dd5484",
+        "type": "postgresql",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "query": "{{{msg.payload}}}",
+        "postgreSQLConfig": "75221c0a883ee815",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 450,
+        "y": 440,
+        "wires": [
+            [
+                "d12a596358b48444"
+            ]
+        ]
+    },
+    {
+        "id": "f12189370af5a50f",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 8",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "4269435fe11eba37",
+        "type": "moment",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "topic": "",
+        "input": "",
+        "inputType": "date",
+        "inTz": "Asia/Jakarta",
+        "adjAmount": 0,
+        "adjType": "days",
+        "adjDir": "add",
+        "format": "YYYY-MM-DD HH:mm:ss",
+        "locale": "en-US",
+        "output": "time",
+        "outputType": "msg",
+        "outTz": "Asia/Jakarta",
+        "x": 960,
+        "y": 140,
+        "wires": [
+            [
+                "33084c45c3e91f28"
+            ]
+        ]
+    },
+    {
+        "id": "88817217f89c4496",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 740,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2eba084eb2357d5e",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c0c9af9e97b28ccb",
+        "type": "exec",
+        "z": "7c651a7b.51e084",
+        "command": "ping google.com -c 5",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 300,
+        "y": 520,
+        "wires": [
+            [
+                "edf0b64f28fe1183"
+            ],
+            [
+                "edf0b64f28fe1183"
+            ],
+            [
+                "edf0b64f28fe1183"
+            ]
+        ]
+    },
+    {
+        "id": "edf0b64f28fe1183",
+        "type": "debug",
+        "z": "7c651a7b.51e084",
+        "name": "debug 10",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "71adfc2d7ae5efb4",
+        "type": "inject",
+        "z": "7c651a7b.51e084",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "c0c9af9e97b28ccb"
+            ]
+        ]
+    },
+    {
+        "id": "75221c0a883ee815",
+        "type": "postgreSQLConfig",
+        "name": "db_unilever",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "unilever_temp_hum",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "@indoserako",
+        "passwordFieldType": "str"
+    }
+]
