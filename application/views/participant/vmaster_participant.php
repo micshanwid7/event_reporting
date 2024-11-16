@@ -34,17 +34,13 @@
 
 	<div class="content">
 		<div class="container-fluid">
-			<div class="mb-2">
+			<div class="d-flex justify-content-between mb-2">
 				<a href="<?= base_url() . 'report/participant_add' ?>" class="btn btn-primary mr-2 mb-2"><i class="fa fa-plus mr-2"></i> Add New Participant</a>
+				<div class="text-right">
+					<a href="<?= base_url() . 'report/participant_export' ?>" class="btn btn-success mr-2 mb-2"><i class="fa fa-file-excel mr-2"></i> Export</a>
+					<a href="<?= base_url() . 'report/participant_import' ?>" class="btn btn-success mr-2 mb-2"><i class="fa fa-file-excel mr-2"></i> Import</a>
+				</div>
 			</div>
-			<form action="<?= base_url() . 'report/import' ?>" method="POST" enctype="multipart/form-data">
-                <div class="form-group mt-3">
-                    <label class="mr-2">Upload File XLSX:</label>
-                    <input type="file" name="file">
-                </div>
-                <hr>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
 			<div class="row">
 				<div class="col-12">
 					<div class="card">
@@ -56,7 +52,6 @@
 								<table class="table table-bordered" id="datatable">
 									<thead>
 										<th class="w5">No.</th>
-										<th>Email</th>
 										<th>Name</th>
 										<th>Company</th>
 										<th>Log Visit</th>
@@ -67,12 +62,12 @@
 											foreach ($row as $key => $value) { ?>
 											<tr>
 												<td></td>
-												<td><?= $value['email'] ?></td>
 												<td><?= $value['name'] ?></td>
 												<td><?= $value['company_name'] ?></td>
-												<td><?= $value['log_visit'] ?></td>
+												<td class="text-right"><?= $value['log_visit'] == null ? "<span class='text-muted font-italic'>Not yet present</span>" : date("j F Y H:i:s", strtotime($value['log_visit'])) ?></td>
 												<td class="text-center">	
-													<a href="<?= base_url().'master/user_edit/'.$value['id'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
+													<a class="mr-2" href="<?= base_url().'report/participant_rollback/'.$value['id'] ?>" title="Rollback Visit"><i class="fa fa-undo"></i></a>
+													<a href="<?= base_url().'report/participant_edit/'.$value['id'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
 												</td>
 											</tr>
 										<?php
@@ -100,10 +95,10 @@
 			"info": true,
 			"autoWidth": false,
 			"responsive": false,
-			"iDisplayLength": 10,
+			"iDisplayLength": 50,
 			"columnDefs": [{
 				"orderable": false,
-				"targets": [0, 4, 5]
+				"targets": [0, 4]
 			}],
 			"order": [
 				[1, 'asc']

@@ -1,5 +1,5 @@
 <style>
-	.grid_image{
+	.grid_image {
 		text-align: center;
 		display: none;
 	}
@@ -17,7 +17,7 @@
 					<ol class="breadcrumb float-sm-right">
 						<li class="breadcrumb-item"><a href="<?= base_url(); ?>">Main</a></li>
 						<li class="breadcrumb-item">Setting</li>
-						<li class="breadcrumb-item"><a href="<?= base_url() . 'master/user'; ?>">User</a></li>
+						<li class="breadcrumb-item"><a href="<?= base_url() . 'report/participant'; ?>">Participant</a></li>
 						<li class="breadcrumb-item active">Add</li>
 					</ol>
 				</div>
@@ -31,20 +31,12 @@
 				<a href="<?= base_url() . 'master/plant_add' ?>" class="btn btn-primary mr-2 mb-2">Add New Equipment</a>
 			</div> -->
 			<form action="" id="form-add" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">	<!-- CSRF protection untuk form -->	
+				<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>"> <!-- CSRF protection untuk form -->
 				<div class="row">
 					<div class="col-lg-8">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
-									<div class="col-6 mb-2">
-										<label>Username</label><span class="text-danger">*</span>
-										<div class="">
-											<input class="form-control mr-2" id="i_username" name="i_username" placeholder="..." value="<?php echo set_value('i_username'); ?>" onkeyup="dupe_check()" autocomplete="off"/>
-										</div>
-										<div class="text-danger" id="dupe_error" style="display:none;">Username already exist!</div>
-										<span class="text-danger"><?php echo form_error('i_username'); ?></span>
-									</div>
 									<div class="col-6 mb-2">
 										<label>Name</label><span class="text-danger">*</span>
 										<div class="">
@@ -53,32 +45,11 @@
 										<span class="text-danger"><?php echo form_error('i_name'); ?></span>
 									</div>
 									<div class="col-6 mb-2">
-										<label>Password</label><span class="text-danger">*</span>
+										<label>Company Name</label><span class="text-danger">*</span>
 										<div class="">
-											<input type="password" class="form-control mr-2" id="txt_password_add" name="i_password" autocomplete="off" value="<?php echo set_value('i_password'); ?>" />
+											<input class="form-control mr-2" id="i_company_name" name="i_company_name" autocomplete="off" placeholder="..." value="<?php echo set_value('i_company_name'); ?>" />
 										</div>
-										<span class="text-danger"><?php echo form_error('i_password'); ?></span>
-									</div>
-									<div class="col-6 mb-2">
-										<label>Confirm Password</label><span class="text-danger">*</span>
-										<div class="">
-											<input type="password" class="form-control mr-2" id="txt_confirm_pass_add" name="i_c_password" autocomplete="off" value="<?php echo set_value('i_c_password'); ?>" onkeyup="password_match()" />
-										</div>
-										<div class="text-danger" id="dupe_error_cpass" style="display:none;">Confirm Password does not match!</div>
-										<span class="text-danger"><?php echo form_error('i_c_password'); ?></span>
-									</div>
-									<div class="col-12 mb-2">
-										<label>Level</label>
-										<select autofocus="" id="i_level" name="i_level" class="form-control">
-											<option value="99" <?php
-                                            			if (set_value('i_level') == 99) {
-                                                			echo "selected=selected";
-                                            			}?>>Administrator</option>	
-											<option value="1" <?php
-                                            			if (set_value('i_level') == 1) {
-                                                			echo "selected=selected";
-                                            			}?>>Viewer</option>		
-										</select>
+										<span class="text-danger"><?php echo form_error('i_company_name'); ?></span>
 									</div>
 								</div>
 							</div>
@@ -105,7 +76,7 @@
 		let x = <?= json_encode($user_list) ?>;
 		let ids = $("#i_username").val().toUpperCase();
 
-		if(x != null){
+		if (x != null) {
 			x.every((element, index, array) => {
 				if (ids == element.username.toUpperCase()) {
 					document.getElementById("btn_submit").disabled = true;
@@ -123,7 +94,7 @@
 	function password_match(event) {
 		let pass = $('#txt_password_add').val().toUpperCase();
 		let cpass = $('#txt_confirm_pass_add').val().toUpperCase();
-		
+
 		if (pass != cpass) {
 			document.getElementById("btn_submit").disabled = true;
 			$("#dupe_error_cpass").show()

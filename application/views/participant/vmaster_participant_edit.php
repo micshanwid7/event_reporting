@@ -11,13 +11,13 @@
 		<div class="container-fluid">
 			<div class="row mb-2">
 				<div class="col-sm-6">
-					<h1 class="m-0">Edit User</h1>
+					<h1 class="m-0">Edit Participant</h1>
 				</div>
 				<div class="col-sm-6">
 					<ol class="breadcrumb float-sm-right">
 						<li class="breadcrumb-item"><a href="<?= base_url(); ?>">Main</a></li>
 						<li class="breadcrumb-item">Setting</li>
-						<li class="breadcrumb-item"><a href="<?= base_url() . 'master/user'; ?>">User</a></li>
+						<li class="breadcrumb-item"><a href="<?= base_url() . 'report/participant'; ?>">Participant</a></li>
 						<li class="breadcrumb-item active">Edit</li>
 					</ol>
 				</div>
@@ -36,47 +36,19 @@
 								<div class="row">
 									<div class="col-6 mb-2">
 										<input type="hidden" id="i_id" name="i_id" value="<?php echo set_value('i_id', $edit['id']); ?>" />
-										<label>Username</label><span class="text-danger">*</span>
-										<div class="">
-											<input class="form-control mr-2" id="i_username" name="i_username" autocomplete="off" placeholder="eg: Texturing" readonly value="<?php echo set_value('i_username', $edit['username']); ?>" />
-										</div>
-										<span class="text-danger"><?php echo form_error('i_username'); ?></span>
-									</div>
-									<div class="col-6 mb-2">
 										<label>Name</label><span class="text-danger">*</span>
 										<div class="">
 											<input class="form-control mr-2" id="i_name" name="i_name" autocomplete="off" placeholder="eg: Texturing" value="<?php echo set_value('i_name', $edit['name']); ?>" />
 										</div>
 										<span class="text-danger"><?php echo form_error('i_name'); ?></span>
 									</div>
-									<!-- <div class="col-6 mb-2">
-										<label>Password</label>
-										<div class="">
-											<input type="password" class="form-control mr-2" id="txt_password" name="i_password" autocomplete="off" value="<?php echo set_value('i_password', $edit['password']); ?>" />
-										</div>
-										<span class="text-danger"><?php echo form_error('i_password'); ?></span>
-									</div>
 									<div class="col-6 mb-2">
-										<label>Confirm Password</label>
+										<label>Company Name</label><span class="text-danger">*</span>
 										<div class="">
-											<input type="password" class="form-control mr-2" id="txt_confirm_pass" name="i_c_password" autocomplete="off" value="<?php echo set_value('i_c_password', $edit['password']); ?>" onkeyup="password_match()" />
+											<input class="form-control mr-2" id="i_company_name" name="i_company_name" autocomplete="off" placeholder="eg: Texturing" value="<?php echo set_value('i_company_name', $edit['company_name']); ?>" />
 										</div>
-										<div class="text-danger" id="dupe_error_cpass" style="display:none;">Confirm Password does not match!</div>
-										<span class="text-danger"><?php echo form_error('i_c_password'); ?></span>
-									</div> -->
-									<div class="col-12 mb-2">
-										<label>Level</label>
-										<select autofocus="" id="i_level" name="i_level" class="form-control">
-												<option value="99" 
-													<?php if (set_value('i_level', $edit['level']) == 99) {
-													echo "selected=selected";
-												}?>>Administrator</option>
-												<option value="1" 
-													<?php if (set_value('i_level', $edit['level']) == 1) {
-													echo "selected=selected";
-												}?>>Viewer</option>
-										</select>
-									</div>
+										<span class="text-danger"><?php echo form_error('i_company_name'); ?></span>
+									</div>								
 								</div>
 							</div>
 							<div class="card-footer">
@@ -103,46 +75,5 @@
 	var base_url = '<?php echo base_url() ?>';
 	$(function() {
 		bsCustomFileInput.init();
-	});
-
-	function password_match(event) {
-		let pass = $('#txt_password').val().toUpperCase();
-		let cpass = $('#txt_confirm_pass').val().toUpperCase();
-		
-		if (pass != cpass) {
-			document.getElementById("btn_submit").disabled = true;
-			$("#dupe_error_cpass").show()
-			return false;
-		} else if (cpass == "" || pass == cpass) {
-			document.getElementById("btn_submit").disabled = false;
-			$("#dupe_error_cpass").hide()
-			return true;
-		}
-	}
-
-	$(".company-dropdown").change(function(){
-		$('#i_id_plant').html(""); 
-		var div_data = "";
-		if($(this).val() != ""){
-			$.ajax({
-				type: "GET",
-				url: base_url + "master/get_plant_by_comp",
-				data: {'id_company': $(this).val()},
-				dataType: 'json',
-				success: 
-					function(data){
-						if(data.length > 0){
-							data.forEach(element => {
-								div_data += `<option value="`+ element.id +`">`+ element.plant_name +`</option>`;
-							});
-						}
-						$('#i_id_plant').append(div_data);
-					},
-					complete: function() {
-					}
-				});
-		}else{
-			$('#i_id_plant').append(div_data);
-		}
 	});
 </script>

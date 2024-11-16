@@ -97,7 +97,6 @@ class Mglobal extends CI_Model
 		//-- to be called after loading vheader
 
 		$temp = $this->session->flashdata('global');
-		var_dump($temp);
 		$data['msg'] = '';
 		/* flag
 		|  0 = danger
@@ -163,6 +162,26 @@ class Mglobal extends CI_Model
 			case 'invalid_file':
 				$data['msg'] = 'Xlsx file only!';
 				$this->load->view('page/vtoast', $data);
+				break;
+			case 'imp_success':
+				$data['flag'] = 2;
+				$data['msg'] = 'Import data success!';
+				$this->load->view('page/vtoast', $data);
+				break;
+			case 'imp_failed':
+				$data['msg'] = 'Import data failed!';
+				$this->load->view('page/vtoast', $data);
+				break;
+			case 'dup_data':
+				$data['flag'] = 2;
+				$data['msg'] = 'Several data already exist! Update success!';
+				$this->load->view('page/vtoast', $data);
+				break;
+			case 'roll_success':
+				$data['flag'] = 2;
+				$data['msg'] = 'Rollback Visit success!';
+				$this->load->view('page/vtoast', $data);
+				break;
 			case $temp:
 				if (!empty($temp)) {
 					$data['msg'] = $temp;
@@ -358,7 +377,7 @@ class Mglobal extends CI_Model
 			return $res ? $res->row_array() : false;
 		} else {
 			switch ($table) {
-				case 'device':
+				case 'participants':
 					$this->db->order_by('id', 'asc');
 					break;
 				case 'line':
